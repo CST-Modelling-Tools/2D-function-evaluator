@@ -1,0 +1,41 @@
+# Build directories
+/build/
+/out/
+/bin/
+/lib/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+Testing/
+CTestTestfile.cmake
+_deps/
+
+# CTest / test logs
+LastTest.log
+LastTestsFailed.log
+
+# User-specific CMake presets
+CMakeUserPresets.json
+
+# Editor and IDE files
+.vscode/
+.idea/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generic temporary files
+*.tmp
+*.temp
+*.log

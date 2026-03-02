@@ -1,8 +1,10 @@
 add_executable(test_basic test_basic.cpp)
 
+# Link against the core library so tests can include headers from src/
+# and reuse the same implementation objects.
 target_link_libraries(test_basic
     PRIVATE
-        nlohmann_json::nlohmann_json
+        2d-function-evaluator_lib
 )
 
 if(MSVC)
