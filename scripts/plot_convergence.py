@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Plot best/median/worst objective by generation from history.csv."
     )
@@ -50,7 +50,7 @@ def parse_args() -> argparse.Namespace:
         default=True,
         help="Overlay cumulative best objective across generations (default: true).",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def load_history(path: Path) -> pd.DataFrame:
@@ -133,8 +133,8 @@ def plot_stats(stats: pd.DataFrame, title: str | None, logy: bool, show_best_so_
     return fig
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
     history = load_history(Path(args.history))
     prepared = prepare_history(history, args.pop_size)
     stats = build_stats(prepared)

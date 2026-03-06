@@ -26,7 +26,7 @@ import pandas as pd
 from functions_2d import get_bounds, get_function, infer_bounds_from_points
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Plot one generation of an evolutionary optimization history over an objective contour."
     )
@@ -57,7 +57,7 @@ def parse_args() -> argparse.Namespace:
         default=True,
         help="Mark the best point seen up to and including the selected generation.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def load_history(path: Path) -> pd.DataFrame:
@@ -144,8 +144,8 @@ def select_best_so_far(frame: pd.DataFrame, generation: int) -> pd.Series | None
     return ordered.iloc[0]
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
     history = load_history(Path(args.history))
     prepared = prepare_history(history, args.pop_size)
 

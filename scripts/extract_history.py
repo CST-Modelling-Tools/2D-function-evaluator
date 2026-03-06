@@ -28,7 +28,7 @@ class EvalRow:
     individual: int | None = None
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Extract x/y/objective history from a run directory into CSV."
     )
@@ -72,7 +72,7 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional population size for reconstructing generation/individual columns.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def safe_load_json(path: Path) -> tuple[dict[str, Any] | None, str | None]:
@@ -220,8 +220,8 @@ def write_csv(rows: list[EvalRow], out_path: Path, include_generations: bool) ->
             writer.writerow(values)
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
     run_dir = Path(args.run_dir).resolve()
     if not run_dir.exists() or not run_dir.is_dir():
         print(f"Error: --run-dir does not exist or is not a directory: {run_dir}", file=sys.stderr)

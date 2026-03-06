@@ -21,7 +21,7 @@ import pandas as pd
 from functions_2d import get_bounds, get_function, infer_bounds_from_points
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Animate evolutionary populations across generations from history.csv."
     )
@@ -56,7 +56,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Show a faint trail of best-so-far positions across previous generations.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def load_history(path: Path) -> pd.DataFrame:
@@ -148,8 +148,8 @@ def best_so_far_rows(frame: pd.DataFrame, generations: list[int]) -> list[pd.Ser
     return results
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
     history = load_history(Path(args.history))
     prepared = prepare_history(history, args.pop_size)
     function_name = infer_function(history, args.function)

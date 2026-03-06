@@ -3,6 +3,8 @@
 This repository keeps the C++ evaluator focused on fast JSON-in/JSON-out execution.  
 Visualization is provided as separate, opt-in Python scripts under `scripts/`.
 
+`viz.py` provides a single wrapper CLI for the most common workflows while keeping the standalone scripts available.
+
 ## What These Scripts Do
 
 - `extract_history.py`: scans a run folder, discovers evaluation artifacts, and writes a single `history.csv`.
@@ -29,6 +31,12 @@ pip install -r scripts/requirements.txt
 2. Extract history from run artifacts:
 
 ```powershell
+python scripts/viz.py extract --run-dir "D:\Optimizations\Rastrigin Optimization" --out history.csv
+```
+
+Standalone:
+
+```powershell
 python scripts/extract_history.py --run-dir "D:\Optimizations\Rastrigin Optimization" --out history.csv
 ```
 
@@ -53,6 +61,12 @@ If your `history.csv` already contains a `generation` column, the script uses it
 Example:
 
 ```powershell
+python scripts/viz.py convergence --history history.csv --pop-size 100 --out convergence.png
+```
+
+Standalone:
+
+```powershell
 python scripts/plot_convergence.py --history history.csv --pop-size 100 --out convergence.png
 ```
 
@@ -65,6 +79,12 @@ If your `history.csv` already contains a `generation` column, the script uses it
 Example:
 
 ```powershell
+python scripts/viz.py gen --history history.csv --pop-size 100 --gen 20 --out gen20.png
+```
+
+Standalone:
+
+```powershell
 python scripts/plot_generation.py --history history.csv --pop-size 100 --gen 20 --out gen20.png
 ```
 
@@ -75,6 +95,12 @@ Use `animate_generations.py` to animate the population generation by generation 
 If your `history.csv` already contains a `generation` column, the script uses it directly. Otherwise, provide `--pop-size` so generations can be reconstructed from `eval_index`.
 
 Example:
+
+```powershell
+python scripts/viz.py animate --history history.csv --pop-size 100 --out de.gif
+```
+
+Standalone:
 
 ```powershell
 python scripts/animate_generations.py --history history.csv --pop-size 100 --out de.gif
