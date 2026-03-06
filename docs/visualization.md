@@ -44,6 +44,18 @@ python scripts/plot_trajectory.py --history ".\history.csv" --out ".\trajectory.
 python scripts/animate_trajectory.py --history ".\history.csv" --out ".\traj.gif"
 ```
 
+## Evolutionary Convergence
+
+Use `plot_convergence.py` to visualize per-generation objective statistics for evolutionary runs. It plots `best`, `median`, and `worst`, and can also overlay `best-so-far`.
+
+If your `history.csv` already contains a `generation` column, the script uses it directly. Otherwise, provide `--pop-size` so generations can be reconstructed from `eval_index`.
+
+Example:
+
+```powershell
+python scripts/plot_convergence.py --history history.csv --pop-size 100 --out convergence.png
+```
+
 ## History Extraction Notes
 
 `extract_history.py` discovers all `output.json` files (recursively by default), and tries to pair each with `input.json` in the same directory.
