@@ -68,6 +68,20 @@ Example:
 python scripts/plot_generation.py --history history.csv --pop-size 100 --gen 20 --out gen20.png
 ```
 
+## Animation (Generations)
+
+Use `animate_generations.py` to animate the population generation by generation over the objective contour. This is the most useful view for understanding how an evolutionary optimizer moves and contracts over time.
+
+If your `history.csv` already contains a `generation` column, the script uses it directly. Otherwise, provide `--pop-size` so generations can be reconstructed from `eval_index`.
+
+Example:
+
+```powershell
+python scripts/animate_generations.py --history history.csv --pop-size 100 --out de.gif
+```
+
+Use `.gif` output for the most portable workflow. `.mp4` output requires `ffmpeg` installed and discoverable by matplotlib; otherwise, use GIF instead.
+
 ## History Extraction Notes
 
 `extract_history.py` discovers all `output.json` files (recursively by default), and tries to pair each with `input.json` in the same directory.
