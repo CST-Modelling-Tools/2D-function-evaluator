@@ -4,6 +4,12 @@ This repository keeps the C++ evaluator focused on fast JSON-in/JSON-out executi
 Visualization is provided as separate, opt-in Python scripts under `scripts/`.
 
 `viz.py` provides a single wrapper CLI for the most common workflows while keeping the standalone scripts available.
+On Windows, `viz.bat` and `viz.ps1` are convenience launchers that automatically use the evaluator repository's `.venv` Python.
+
+Relative `--out` paths are resolved against the user data location, not the evaluator repository:
+
+- `extract_history.py`: relative outputs go under `--run-dir`
+- plotting/animation scripts: relative outputs go next to the provided `--history` file
 
 ## What These Scripts Do
 
@@ -31,26 +37,36 @@ pip install -r scripts/requirements.txt
 2. Extract history from run artifacts:
 
 ```powershell
-python scripts/viz.py extract --run-dir "D:\Optimizations\Rastrigin Optimization" --out history.csv
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat extract --run-dir . --out history.csv --pop-size 100
+```
+
+When run from the optimization repository, this writes `history.csv` into that repository. The same relative-output behavior also works if you invoke the evaluator scripts from another working directory.
+
+PowerShell launcher:
+
+```powershell
+& "D:\OpenSource\2D-function-evaluator\scripts\viz.ps1" extract --run-dir . --out history.csv --pop-size 100
 ```
 
 Standalone:
 
 ```powershell
-python scripts/extract_history.py --run-dir "D:\Optimizations\Rastrigin Optimization" --out history.csv
+"D:\OpenSource\2D-function-evaluator\.venv\Scripts\python.exe" "D:\OpenSource\2D-function-evaluator\scripts\extract_history.py" --run-dir . --out history.csv --pop-size 100
 ```
 
 3. Generate static trajectory plot:
 
 ```powershell
-python scripts/plot_trajectory.py --history ".\history.csv" --out ".\trajectory.png"
+"D:\OpenSource\2D-function-evaluator\.venv\Scripts\python.exe" "D:\OpenSource\2D-function-evaluator\scripts\plot_trajectory.py" --history .\history.csv --out trajectory.png
 ```
 
 4. Generate animation:
 
 ```powershell
-python scripts/animate_trajectory.py --history ".\history.csv" --out ".\traj.gif"
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat animate --history .\history.csv --out de.gif
 ```
+
+The 2D generation animation keeps its generation label and legend in fixed positions across frames for a more stable GIF.
 
 ## Evolutionary Convergence
 
@@ -61,7 +77,7 @@ If your `history.csv` already contains a `generation` column, the script uses it
 Example:
 
 ```powershell
-python scripts/viz.py convergence --history history.csv --pop-size 100 --out convergence.png
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat convergence --history history.csv --pop-size 100 --out convergence.png
 ```
 
 Standalone:
@@ -85,7 +101,7 @@ python scripts/plot_diversity.py --history history.csv --pop-size 100 --out dive
 Wrapper:
 
 ```powershell
-python scripts/viz.py diversity --history history.csv --pop-size 100 --out diversity.png
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat diversity --history history.csv --pop-size 100 --out diversity.png
 ```
 
 Interpretation:
@@ -103,7 +119,7 @@ If your `history.csv` already contains a `generation` column, the script uses it
 Example:
 
 ```powershell
-python scripts/viz.py gen --history history.csv --pop-size 100 --gen 20 --out gen20.png
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat gen --history history.csv --pop-size 100 --gen 20 --out gen20.png
 ```
 
 Standalone:
@@ -121,7 +137,7 @@ If your `history.csv` already contains a `generation` column, the script uses it
 Example:
 
 ```powershell
-python scripts/viz.py animate --history history.csv --pop-size 100 --out de.gif
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat animate --history history.csv --pop-size 100 --out de.gif
 ```
 
 Standalone:
@@ -131,6 +147,22 @@ python scripts/animate_generations.py --history history.csv --pop-size 100 --out
 ```
 
 Use `.gif` output for the most portable workflow. `.mp4` output requires `ffmpeg` installed and discoverable by matplotlib; otherwise, use GIF instead.
+
+## Animation (Generations, 3D)
+
+Use `animate_generations_3d.py` to animate the population over the full 3D objective surface, with each individual shown at `(x, y, objective)`. This is heavier than the 2D view, but it is useful when you want to see how the population sits on the landscape itself.
+
+Example:
+
+```powershell
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat animate3d --history history.csv --pop-size 100 --out de3d.gif
+```
+
+Standalone:
+
+```powershell
+"D:\OpenSource\2D-function-evaluator\.venv\Scripts\python.exe" "D:\OpenSource\2D-function-evaluator\scripts\animate_generations_3d.py" --history history.csv --pop-size 100 --out de3d.gif
+```
 
 ## History Extraction Notes
 

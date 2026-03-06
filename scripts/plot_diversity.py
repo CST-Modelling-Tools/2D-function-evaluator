@@ -24,6 +24,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from output_paths import resolve_output_path
+
 SUPPORTED_METRICS = ("std_x", "std_y", "spread", "ellipse_area")
 
 
@@ -187,14 +189,17 @@ def plot_metrics(stats: pd.DataFrame, metrics: list[str], title: str | None, log
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     metrics = parse_metrics(args.metrics)
-    history = load_history(Path(args.history))
+    history_path = Path(args.history).resolve()
+    history = load_history(history_path)
     prepared = prepare_history(history, args.pop_size)
     stats = build_metrics(prepared)
     use_logy = should_use_log_scale(stats, metrics, args.logy)
     fig = plot_metrics(stats, metrics, args.title, use_logy)
 
     if args.out:
-        out_path = Path(args.out)
+        out_path = resolve_output_path(args.out, history_path.parent)
+        if out_path is None:
+            raise ValueError("Failed to resolve output path.")
         out_path.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(out_path, dpi=160)
         print(f"Saved plot: {out_path}")

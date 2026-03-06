@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from output_paths import resolve_output_path
+
 
 @dataclass
 class EvalRow:
@@ -230,7 +232,7 @@ def main(argv: list[str] | None = None) -> int:
         print("Error: --pop-size must be >= 1", file=sys.stderr)
         return 2
 
-    out_path = Path(args.out).resolve() if args.out else run_dir / "history.csv"
+    out_path = resolve_output_path(args.out, run_dir) if args.out else run_dir / "history.csv"
 
     output_files = discover_output_files(run_dir, args.output_name, args.recursive)
     rows: list[EvalRow] = []

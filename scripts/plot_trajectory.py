@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from functions_2d import get_bounds, get_function, infer_bounds_from_points
+from output_paths import resolve_output_path
 
 
 def preparse_out_path() -> str | None:
@@ -117,7 +118,7 @@ def infer_bounds(
 
 def main() -> int:
     args = parse_args()
-    history_path = Path(args.history)
+    history_path = Path(args.history).resolve()
     rows = load_history(history_path)
     if not rows:
         raise ValueError("History CSV is empty.")
@@ -191,7 +192,9 @@ def main() -> int:
     fig.tight_layout()
 
     if args.out:
-        out_path = Path(args.out)
+        out_path = resolve_output_path(args.out, history_path.parent)
+        if out_path is None:
+            raise ValueError("Failed to resolve output path.")
         out_path.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(out_path, dpi=160)
         print(f"Saved plot: {out_path}")

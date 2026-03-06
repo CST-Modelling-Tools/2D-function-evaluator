@@ -24,6 +24,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from output_paths import resolve_output_path
+
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -135,14 +137,17 @@ def plot_stats(stats: pd.DataFrame, title: str | None, logy: bool, show_best_so_
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    history = load_history(Path(args.history))
+    history_path = Path(args.history).resolve()
+    history = load_history(history_path)
     prepared = prepare_history(history, args.pop_size)
     stats = build_stats(prepared)
     use_logy = should_use_log_scale(stats, args.logy)
     fig = plot_stats(stats, args.title, use_logy, args.show_best_so_far)
 
     if args.out:
-        out_path = Path(args.out)
+        out_path = resolve_output_path(args.out, history_path.parent)
+        if out_path is None:
+            raise ValueError("Failed to resolve output path.")
         out_path.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(out_path, dpi=160)
         print(f"Saved plot: {out_path}")
