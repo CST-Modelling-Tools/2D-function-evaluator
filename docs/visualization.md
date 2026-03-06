@@ -56,6 +56,18 @@ Example:
 python scripts/plot_convergence.py --history history.csv --pop-size 100 --out convergence.png
 ```
 
+## Population Snapshot
+
+Use `plot_generation.py` to inspect the population cloud for one generation over the objective contour. It colors points by objective value, highlights the top-ranked individuals for that generation, and can mark the best point seen up to that generation.
+
+If your `history.csv` already contains a `generation` column, the script uses it directly. Otherwise, provide `--pop-size` so generations can be reconstructed from `eval_index`.
+
+Example:
+
+```powershell
+python scripts/plot_generation.py --history history.csv --pop-size 100 --gen 20 --out gen20.png
+```
+
 ## History Extraction Notes
 
 `extract_history.py` discovers all `output.json` files (recursively by default), and tries to pair each with `input.json` in the same directory.
