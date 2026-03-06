@@ -1,0 +1,100 @@
+# Visualization Tooling (Optional)
+
+This repository keeps the C++ evaluator focused on fast JSON-in/JSON-out execution.  
+Visualization is provided as separate, opt-in Python scripts under `scripts/`.
+
+## What These Scripts Do
+
+- `extract_history.py`: scans a run folder, discovers evaluation artifacts, and writes a single `history.csv`.
+- `plot_trajectory.py`: draws a 2D contour of a selected function and overlays the optimization path.
+- `animate_trajectory.py`: creates a trajectory animation (`.gif` or `.mp4`) over the contour map.
+
+The scripts are best-effort across slightly different run folder/file schemas and do not require FireWorks DB access.
+
+## Install Python Dependencies (Recommended in a venv)
+
+PowerShell:
+
+```powershell
+python -m venv .venv-vis
+.venv-vis\Scripts\Activate.ps1
+pip install -r scripts/requirements.txt
+```
+
+## Typical Workflow
+
+1. Run optimization with GOW (normal evaluator usage).
+2. Extract history from run artifacts:
+
+```powershell
+python scripts/extract_history.py --run-dir "D:\Optimizations\Rastrigin Optimization" --out history.csv
+```
+
+3. Generate static trajectory plot:
+
+```powershell
+python scripts/plot_trajectory.py --history ".\history.csv" --out ".\trajectory.png"
+```
+
+4. Generate animation:
+
+```powershell
+python scripts/animate_trajectory.py --history ".\history.csv" --out ".\traj.gif"
+```
+
+## History Extraction Notes
+
+`extract_history.py` discovers all `output.json` files (recursively by default), and tries to pair each with `input.json` in the same directory.
+
+Recognized output objective fields:
+
+- `objective`
+- `metrics.f`
+- `value`
+
+Recognized output success markers:
+
+- `status == "ok"`
+- `success == true`
+
+Recognized input parameter fields:
+
+- `params.x`, `params.y`, `params.function`
+- or `x`, `y`, `function`
+
+Minimum CSV columns:
+
+- `eval_index`
+- `x`
+- `y`
+- `objective`
+- `function`
+- `eval_dir`
+- `status`
+
+Extra columns are included when available (`timestamp`, output file mtime).
+
+## Bounds Selection
+
+For plotting and animation, bounds are chosen in this order:
+
+1. `--bounds xmin xmax ymin ymax` (explicit override)
+2. Built-in recommended bounds for known evaluator functions:
+   - `sphere`
+   - `rosenbrock`
+   - `rastrigin`
+   - `ackley`
+   - `himmelblau`
+   - `beale`
+   - `goldstein_price`
+   - `mccormick`
+3. If function is unknown: inferred from observed `x/y` in history with small padding.
+
+## Troubleshooting
+
+- Missing `output.json`: ensure `--output-name` matches your run artifacts.
+- Missing/invalid `input.json`: extraction still keeps objective rows (x/y may be empty). Use `--strict` to fail instead.
+- Unknown schema: use defaults first, then set `--input-name` / `--output-name` to your filenames.
+- Unknown function in plotting: pass `--function NAME` explicitly.
+- MP4 export failure: install `ffmpeg` and ensure it is on `PATH`, or output `.gif` instead.
+
