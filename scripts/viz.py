@@ -7,6 +7,7 @@ import argparse
 
 import animate_generations
 import animate_generations_3d
+import animate_generations_dashboard
 import extract_history
 import plot_convergence
 import plot_diversity
@@ -24,6 +25,11 @@ def build_parser() -> argparse.ArgumentParser:
         ("gen", "Plot one population snapshot for a selected generation.", plot_generation.main),
         ("animate", "Animate evolutionary populations across generations.", animate_generations.main),
         ("animate3d", "Animate evolutionary populations over a 3D objective surface.", animate_generations_3d.main),
+        (
+            "dashboard",
+            "Animate a synchronized dashboard with 3D, convergence, and diversity panels.",
+            animate_generations_dashboard.main,
+        ),
     ]
 
     for name, help_text, func in commands:

@@ -164,6 +164,28 @@ Standalone:
 "D:\OpenSource\2D-function-evaluator\.venv\Scripts\python.exe" "D:\OpenSource\2D-function-evaluator\scripts\animate_generations_3d.py" --history history.csv --pop-size 100 --out de3d.gif
 ```
 
+## Animation (Dashboard)
+
+Use `animate_generations_dashboard.py` to generate a synchronized dashboard GIF with three panels:
+
+- 3D population over the objective surface
+- convergence curves
+- diversity curves
+
+This is the most informative single animation when you want population motion, objective progress, and spread collapse in one place.
+
+Example:
+
+```powershell
+D:\OpenSource\2D-function-evaluator\scripts\viz.bat dashboard --history history.csv --pop-size 100 --out dashboard.gif
+```
+
+Standalone:
+
+```powershell
+"D:\OpenSource\2D-function-evaluator\.venv\Scripts\python.exe" "D:\OpenSource\2D-function-evaluator\scripts\animate_generations_dashboard.py" --history history.csv --pop-size 100 --out dashboard.gif
+```
+
 ## History Extraction Notes
 
 `extract_history.py` discovers all `output.json` files (recursively by default), and tries to pair each with `input.json` in the same directory.
