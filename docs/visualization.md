@@ -21,6 +21,8 @@ python -m venv .venv-vis
 pip install -r scripts/requirements.txt
 ```
 
+`pillow` is included in `scripts/requirements.txt` and is required for GIF output from `animate_trajectory.py`.
+
 ## Typical Workflow
 
 1. Run optimization with GOW (normal evaluator usage).
@@ -96,5 +98,5 @@ For plotting and animation, bounds are chosen in this order:
 - Missing/invalid `input.json`: extraction still keeps objective rows (x/y may be empty). Use `--strict` to fail instead.
 - Unknown schema: use defaults first, then set `--input-name` / `--output-name` to your filenames.
 - Unknown function in plotting: pass `--function NAME` explicitly.
-- MP4 export failure: install `ffmpeg` and ensure it is on `PATH`, or output `.gif` instead.
-
+- GIF export requires `pillow`; installing `scripts/requirements.txt` provides it.
+- MP4 export requires `ffmpeg` installed and discoverable by matplotlib; otherwise use GIF output instead.
