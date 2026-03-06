@@ -1,7 +1,0 @@
-eval_index,x,y,objective,function,eval_dir,status,timestamp,output_mtime
-0,0.0,0.0,10,sphere,eval0,ok,,0
-1,1.0,0.0,4,sphere,eval1,ok,,0
-2,0.2,0.3,6,sphere,eval2,ok,,0
-3,1.1,0.8,2.5,sphere,eval3,ok,,0
-4,-0.5,0.2,3.2,sphere,eval4,ok,,0
-5,0.4,-0.6,1.7,sphere,eval5,ok,,0

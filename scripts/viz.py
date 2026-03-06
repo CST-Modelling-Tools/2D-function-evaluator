@@ -8,6 +8,7 @@ import argparse
 import animate_generations
 import extract_history
 import plot_convergence
+import plot_diversity
 import plot_generation
 
 
@@ -18,6 +19,7 @@ def build_parser() -> argparse.ArgumentParser:
     commands: list[tuple[str, str, callable]] = [
         ("extract", "Extract history CSV from run artifacts.", extract_history.main),
         ("convergence", "Plot best/median/worst objective by generation.", plot_convergence.main),
+        ("diversity", "Plot population diversity metrics by generation.", plot_diversity.main),
         ("gen", "Plot one population snapshot for a selected generation.", plot_generation.main),
         ("animate", "Animate evolutionary populations across generations.", animate_generations.main),
     ]

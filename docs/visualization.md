@@ -70,6 +70,30 @@ Standalone:
 python scripts/plot_convergence.py --history history.csv --pop-size 100 --out convergence.png
 ```
 
+## Population Diversity
+
+Use `plot_diversity.py` to track how the population spread changes over generations. This matters for evolutionary algorithms because a gradual decrease usually indicates healthy convergence, while a sudden collapse in diversity combined with stagnant objective values often signals premature convergence.
+
+The script can plot `std_x`, `std_y`, `spread`, and `ellipse_area` by generation. If your `history.csv` already contains a `generation` column, it uses it directly. Otherwise, provide `--pop-size` so generations can be reconstructed from `eval_index`.
+
+Example:
+
+```powershell
+python scripts/plot_diversity.py --history history.csv --pop-size 100 --out diversity.png
+```
+
+Wrapper:
+
+```powershell
+python scripts/viz.py diversity --history history.csv --pop-size 100 --out diversity.png
+```
+
+Interpretation:
+
+- A steady decline in diversity with improving objective values usually means the search is narrowing productively.
+- A sharp diversity collapse while convergence metrics flatten often means the population has clustered too early.
+- Persistently high diversity late in the run can indicate weak exploitation or an overly exploratory configuration.
+
 ## Population Snapshot
 
 Use `plot_generation.py` to inspect the population cloud for one generation over the objective contour. It colors points by objective value, highlights the top-ranked individuals for that generation, and can mark the best point seen up to that generation.
