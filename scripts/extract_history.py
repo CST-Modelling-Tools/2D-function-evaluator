@@ -24,6 +24,8 @@ class EvalRow:
     status: str
     timestamp: str
     output_mtime: float
+    generation: int | None = None
+    individual: int | None = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -63,6 +65,12 @@ def parse_args() -> argparse.Namespace:
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Print parsing summary and best objective (default: true).",
+    )
+    parser.add_argument(
+        "--pop-size",
+        type=int,
+        default=None,
+        help="Optional population size for reconstructing generation/individual columns.",
     )
     return parser.parse_args()
 
@@ -172,37 +180,44 @@ def discover_output_files(run_dir: Path, output_name: str, recursive: bool) -> l
     return files
 
 
-def write_csv(rows: list[EvalRow], out_path: Path) -> None:
+def write_csv(rows: list[EvalRow], out_path: Path, include_generations: bool) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(
-            [
-                "eval_index",
-                "x",
-                "y",
-                "objective",
-                "function",
-                "eval_dir",
-                "status",
-                "timestamp",
-                "output_mtime",
-            ]
-        )
+        header = [
+            "eval_index",
+            "x",
+            "y",
+            "objective",
+            "function",
+            "eval_dir",
+            "status",
+            "timestamp",
+            "output_mtime",
+        ]
+        if include_generations:
+            header.extend(["generation", "individual"])
+        writer.writerow(header)
         for row in rows:
-            writer.writerow(
-                [
-                    row.eval_index,
-                    "" if row.x is None else row.x,
-                    "" if row.y is None else row.y,
-                    "" if row.objective is None else row.objective,
-                    row.function,
-                    row.eval_dir,
-                    row.status,
-                    row.timestamp,
-                    row.output_mtime,
-                ]
-            )
+            values = [
+                row.eval_index,
+                "" if row.x is None else row.x,
+                "" if row.y is None else row.y,
+                "" if row.objective is None else row.objective,
+                row.function,
+                row.eval_dir,
+                row.status,
+                row.timestamp,
+                row.output_mtime,
+            ]
+            if include_generations:
+                values.extend(
+                    [
+                        "" if row.generation is None else row.generation,
+                        "" if row.individual is None else row.individual,
+                    ]
+                )
+            writer.writerow(values)
 
 
 def main() -> int:
@@ -210,6 +225,9 @@ def main() -> int:
     run_dir = Path(args.run_dir).resolve()
     if not run_dir.exists() or not run_dir.is_dir():
         print(f"Error: --run-dir does not exist or is not a directory: {run_dir}", file=sys.stderr)
+        return 2
+    if args.pop_size is not None and args.pop_size < 1:
+        print("Error: --pop-size must be >= 1", file=sys.stderr)
         return 2
 
     out_path = Path(args.out).resolve() if args.out else run_dir / "history.csv"
@@ -282,7 +300,14 @@ def main() -> int:
     for idx, row in enumerate(rows):
         row.eval_index = idx
 
-    write_csv(rows, out_path)
+    if args.pop_size is not None:
+        for row in rows:
+            if row.eval_index is None:
+                continue
+            row.generation = row.eval_index // args.pop_size
+            row.individual = row.eval_index % args.pop_size
+
+    write_csv(rows, out_path, include_generations=args.pop_size is not None)
 
     if args.print_summary:
         print(f"run_dir: {run_dir}")
@@ -290,6 +315,14 @@ def main() -> int:
         print(f"total_output_files_found: {len(output_files)}")
         print(f"parsed_ok: {len(rows)}")
         print(f"skipped: {skipped}")
+        if args.pop_size is not None:
+            generations = 0
+            if rows:
+                known_generations = [row.generation for row in rows if row.generation is not None]
+                if known_generations:
+                    generations = max(known_generations) + 1
+            print(f"pop_size: {args.pop_size}")
+            print(f"generations: {generations}")
 
         with_objective = [r for r in rows if r.objective is not None]
         if with_objective:
